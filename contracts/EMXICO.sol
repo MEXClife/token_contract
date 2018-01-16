@@ -1,9 +1,12 @@
 pragma solidity ^0.4.17;
 
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
-import 'zeppelin-solidity/contracts/token/CanReclaimToken.sol';
+import 'zeppelin-solidity/contracts/token/MintableToken.sol';
+import 'zeppelin-solidity/contracts/ownership/CanReclaimToken.sol';
 import 'zeppelin-solidity/contracts/ownership/Claimable.sol';
 import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
+
+import './EMXToken.sol';
 
 /**
  * The EMXICO ICO Contract.
@@ -25,6 +28,9 @@ contract EMXICO is CanReclaimToken, Claimable, Destructible  {
 
   // address where funds are collected
   address public wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
+
+  // total wei raised
+  uint256 weiRaised = 0;
 
   // how many token units a buyer gets per wei
   uint256 public preSaleRate = 0;
