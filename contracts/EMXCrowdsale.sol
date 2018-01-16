@@ -106,11 +106,15 @@ contract EMXCrowdsale is CanReclaimToken, Claimable, Destructible  {
    */
   function updatePreSaleDays(uint8 _days) onlyOwner public returns (bool) {
     preSaleDays = _days;
+    preSaleEndTime = preSaleStartTime + (preSaleDays * 86400);
+    mainSaleStartTime = preSaleEndTime + 1;
+    mainSaleEndTime = preSaleEndTime + (mainSaleDays * 86400);
     return true;
   }
 
   function updateMainSaleDays(uint8 _days) onlyOwner public returns (bool) {
     mainSaleDays = _days;
+    mainSaleEndTime = preSaleEndTime + (mainSaleDays * 86400);
     return true;
   }
 
