@@ -8,7 +8,8 @@ module.exports = function(deployer, network, accounts) {
   const mainSaleDays = 45;
   const wallet = accounts[0];
 
-  deployer.deploy(EMXCrowdsale,           // the contract
-    preSaleStartTime, preSaleDays, mainSaleDays, wallet);
+  deployer.deploy(EMXCrowdsale,                             // the contract
+    preSaleStartTime, preSaleDays, mainSaleDays, wallet,    // the args
+    {});  // extra args
 
 };

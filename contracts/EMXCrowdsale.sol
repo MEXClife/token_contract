@@ -29,7 +29,6 @@ import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 import 'zeppelin-solidity/contracts/token/MintableToken.sol';
 import 'zeppelin-solidity/contracts/ownership/CanReclaimToken.sol';
 import 'zeppelin-solidity/contracts/ownership/Claimable.sol';
-import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
 
 import './EMXToken.sol';
 
@@ -39,8 +38,7 @@ import './EMXToken.sol';
  * other tokens accidentally sent to this contract, as well as to destroy
  * this contract once the ICO has ended.
  */
-// contract EMXCrowdsale is Claimable  {
-contract EMXCrowdsale is CanReclaimToken, Claimable, Destructible  {
+contract EMXCrowdsale is Claimable, CanReclaimToken  {
 
   using SafeMath for uint256;
 
