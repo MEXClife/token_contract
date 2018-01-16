@@ -1,10 +1,10 @@
 pragma solidity ^0.4.17;
 
-import 'zeppelin-solidity/contracts/token/StandardToken.sol';
-import 'zeppelin-solidity/contracts/token/CanReclaimToken.sol';
+import 'zeppelin-solidity/contracts/token/MintableToken.sol';
+import 'zeppelin-solidity/contracts/ownership/CanReclaimToken.sol';
 import 'zeppelin-solidity/contracts/ownership/Claimable.sol';
 
-contract EMXToken is StandardToken, CanReclaimToken, Claimable  {
+contract EMXToken is MintableToken, CanReclaimToken, Claimable  {
 
   string  public name = 'EMX Token';
   string  public symbol = 'EMX';
@@ -15,14 +15,13 @@ contract EMXToken is StandardToken, CanReclaimToken, Claimable  {
   mapping(address => bool) blackListed;           // blackListed addresses
 
   modifier canTransfer() {
-    require(!transferDisabled);
-    require(blackListed[msg.sender] == false);    // default bool is false
-    _;
-  }
-
-  function EMXToken () public returns (bool) {
-    balances[msg.sender] = totalSupply;
-    return true;
+    if (msg.sender == owner) {
+      _;
+    } else {
+      require(!transferDisabled);
+      require(blackListed[msg.sender] == false);    // default bool is false
+      _;
+    }
   }
 
   /*
