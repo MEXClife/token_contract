@@ -46,6 +46,10 @@ contract EMXCrowdsale is CanReclaimToken, Claimable, Destructible  {
   // The token being sold
   MintableToken public token;
 
+  // days of the ICO
+  uint8 preSaleDays = 15;
+  uint8 mainSaleDays = 45;
+
   // start and end timestamps where investments are allowed (both inclusive)
   uint256 public preSaleStartTime = 1518048001;   // 2018-02-08T00:00:01+00:00
   uint256 public preSaleEndTime = 1519516799;     // 2018-02-24T23:59:59+00:00
@@ -60,8 +64,8 @@ contract EMXCrowdsale is CanReclaimToken, Claimable, Destructible  {
   uint256 maxRaised = 200000 ether;               // target raised
 
   // how many token units a buyer gets per wei
-  uint256 public preSaleRate = 0;
-  uint256 public mainSaleRate = 0;
+  uint256 public preSaleRate = 3500;
+  uint256 public mainSaleRate = 3000;
 
 
   /**
@@ -76,29 +80,60 @@ contract EMXCrowdsale is CanReclaimToken, Claimable, Destructible  {
 
 
   function EMXCrowdsale (uint256 _preSaleStartTime, uint8 _preSaleDays,
-      uint8 _mainSaleDays, uint256 _preSaleRate, uint256 _mainSaleRate,
-      address _wallet) public {
+      uint8 _mainSaleDays, address _wallet) public {
 
     require(_preSaleStartTime >= now);
     require(_preSaleDays > 0);
     require(_mainSaleDays > 0);
-    require(_preSaleRate > 0);
-    require(_mainSaleRate > 0);
     require(_wallet != address(0));
 
     token = createTokenContract();
+
+    preSaleDays = _preSaleDays;
+    mainSaleDays = _mainSaleDays;
 
     preSaleStartTime = _preSaleStartTime;
     preSaleEndTime = _preSaleStartTime + (_preSaleDays * 86400);
     mainSaleStartTime = preSaleEndTime + 1;
     mainSaleEndTime = preSaleEndTime + (_mainSaleDays * 86400);
-    preSaleRate = _preSaleRate;
-    mainSaleRate = _mainSaleRate;
+
     wallet = _wallet;
   }
 
-  function changeWallet(address _wallet) onlyOwner public returns (bool) {
+  /**
+   * List of setter functions for the Crowdsale related variables
+   * These are provided as convenient functions.
+   */
+  function updatePreSaleDays(uint8 _days) onlyOwner public returns (bool) {
+    preSaleDays = _days;
+    return true;
+  }
+
+  function updateMainSaleDays(uint8 _days) onlyOwner public returns (bool) {
+    mainSaleDays = _days;
+    return true;
+  }
+
+  function updateCrowdsaleTime(uint256 _time) onlyOwner public returns (bool) {
+    preSaleStartTime = _time;
+    preSaleEndTime = preSaleStartTime + (preSaleDays * 86400);
+    mainSaleStartTime = preSaleEndTime + 1;
+    mainSaleEndTime = preSaleEndTime + (mainSaleDays * 86400);
+    return true;
+  }
+
+  function updateWallet(address _wallet) onlyOwner public returns (bool) {
     wallet = _wallet;
+    return true;
+  }
+
+  function updatePreSaleRate(uint256 _rate) onlyOwner public returns (bool) {
+    preSaleRate = _rate;
+    return true;
+  }
+
+  function updateMainSaleRate(uint256 _rate) onlyOwner public returns (bool) {
+    mainSaleRate = _rate;
     return true;
   }
 
