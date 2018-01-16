@@ -31,6 +31,7 @@ contract EMXICO is CanReclaimToken, Claimable, Destructible  {
 
   // total wei raised
   uint256 weiRaised = 0;
+  uint256 maxRaised = 200000 ether;               // target raised
 
   // how many token units a buyer gets per wei
   uint256 public preSaleRate = 0;
@@ -47,7 +48,6 @@ contract EMXICO is CanReclaimToken, Claimable, Destructible  {
    */
   event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
-  event Finalized();
 
   function EMXICO (uint256 _preSaleStartTime, uint256 _preSaleEndTime,
                    uint256 _mainSaleStartTime, uint256 _mainSaleEndTime,
@@ -117,36 +117,13 @@ contract EMXICO is CanReclaimToken, Claimable, Destructible  {
   function validPurchase() internal view returns (bool) {
     bool withinPeriod = now >= preSaleStartTime && now <= mainSaleEndTime;
     bool nonZeroPurchase = msg.value != 0;
-    return withinPeriod && nonZeroPurchase;
+    bool withinMax = maxRaised <= weiRaised;
+    return withinPeriod && nonZeroPurchase && withinMax;
   }
 
   // @return true if crowdsale event has ended
   function hasEnded() public view returns (bool) {
     return now > mainSaleEndTime;
-  }
-
-  /**
-   * @dev Must be called after crowdsale ends, to do some extra finalization
-   * work. Calls the contract's finalization function.
-   */
-  function finalize() onlyOwner public {
-    require(!isFinalized);
-    require(hasEnded());
-
-    finalization();
-    Finalized();
-
-    isFinalized = true;
-  }
-
-  /**
-   * @dev Can be overridden to add finalization logic. The overriding function
-   * should call super.finalization() to ensure the chain of finalization is
-   * executed entirely.
-   */
-  function finalization() internal {
-    // disable minting.
-    token.finishMinting();
   }
 
 }
