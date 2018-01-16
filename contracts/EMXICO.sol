@@ -1,14 +1,19 @@
 pragma solidity ^0.4.17;
 
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
-import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
+import 'zeppelin-solidity/contracts/token/CanReclaimToken.sol';
+import 'zeppelin-solidity/contracts/ownership/Claimable.sol';
+import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
 
 /**
- * The EMXICO ICO Contract
+ * The EMXICO ICO Contract.
+ * It is based on ERC20 Standard token, with ERC23 functionality to reclaim
+ * other tokens accidentally sent to this contract, as well as to destroy
+ * this contract once the ICO has ended.
  */
-contract EMXICO is Ownable {
+contract EMXICO is CanReclaimToken, Claimable, Destructible  {
   using SafeMath for uint256;
-  
+
   // The token being sold
   MintableToken public token;
 
@@ -25,7 +30,7 @@ contract EMXICO is Ownable {
   uint256 public preSaleRate = 0;
   uint256 public mainSaleRate = 0;
 
-  bool public isFinalized = false;  
+  bool public isFinalized = false;
 
   /**
    * event for token purchase logging
@@ -38,7 +43,7 @@ contract EMXICO is Ownable {
 
   event Finalized();
 
-  function EMXICO (uint256 _preSaleStartTime, uint256 _preSaleEndTime, 
+  function EMXICO (uint256 _preSaleStartTime, uint256 _preSaleEndTime,
                    uint256 _mainSaleStartTime, uint256 _mainSaleEndTime,
                    uint256 _preSaleRate, uint256 _mainSaleRate,
                    address _wallet) public {
@@ -58,7 +63,7 @@ contract EMXICO is Ownable {
     preSaleRate = _preSaleRate;
     mainSaleRate = _mainSaleRate;
     wallet = _wallet;
-  }  
+  }
 
   function createTokenContract() internal returns (MintableToken) {
     return new EMXToken();
