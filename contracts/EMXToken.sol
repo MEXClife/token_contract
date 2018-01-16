@@ -10,8 +10,14 @@ contract EMXToken is MintableToken, CanReclaimToken, Claimable  {
   string  public symbol = 'EMX';
   uint8   public decimals = 18;
   uint256 public totalSupply = 1000000000 ether;  // 1b EMX tokens
+
   bool    public transferDisabled = true;         // disable transfer init.
 
+  /*
+   * the real reason for blackListed addresses are for those who are
+   * mistakenly sent the EMX tokens to the wrong address. We can disable
+   * the usage of the EMX tokens here.
+   */
   mapping(address => bool) blackListed;           // blackListed addresses
 
   modifier canTransfer() {
@@ -19,7 +25,7 @@ contract EMXToken is MintableToken, CanReclaimToken, Claimable  {
       _;
     } else {
       require(!transferDisabled);
-      require(blackListed[msg.sender] == false);    // default bool is false
+      require(blackListed[msg.sender] == false);  // default bool is false
       _;
     }
   }
