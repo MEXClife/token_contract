@@ -11,6 +11,12 @@ $ npm install -g ethereumjs-testrpc
 $ npm install -g truffle
 ```
 
+## Add Node modules
+initialize all node components by doing node install
+```
+$ npm install
+```
+
 ## Compile
 
 Compiling can be done as:
