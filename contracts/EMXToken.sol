@@ -39,6 +39,9 @@ contract EMXToken is MintableToken, CanReclaimToken, Claimable  {
 
   bool    public transferDisabled = true;         // disable transfer init.
 
+  // empty constructor
+  function EMXToken() public {}
+
   /*
    * the real reason for blackListed addresses are for those who are
    * mistakenly sent the EMX tokens to the wrong address. We can disable

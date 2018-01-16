@@ -3,10 +3,13 @@ compile:
 	truffle compile
 
 migrate:
-	truffle migrate
+	truffle migrate --network development
+
+migrate-live:
+	truffle migrate --network live
 
 rpc:
-	testrpc -u 0
+	testrpc --port 7545 -u 0
 
 
 

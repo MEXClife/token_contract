@@ -39,7 +39,8 @@ import './EMXToken.sol';
  * other tokens accidentally sent to this contract, as well as to destroy
  * this contract once the ICO has ended.
  */
-contract EMXICO is CanReclaimToken, Claimable, Destructible  {
+contract EMXCrowdsale is CanReclaimToken, Claimable, Destructible  {
+
   using SafeMath for uint256;
 
   // The token being sold
@@ -62,7 +63,6 @@ contract EMXICO is CanReclaimToken, Claimable, Destructible  {
   uint256 public preSaleRate = 0;
   uint256 public mainSaleRate = 0;
 
-  bool public isFinalized = false;
 
   /**
    * event for token purchase logging
@@ -71,29 +71,35 @@ contract EMXICO is CanReclaimToken, Claimable, Destructible  {
    * @param value weis paid for purchase
    * @param amount amount of tokens purchased
    */
-  event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
+  event TokenPurchase(address indexed purchaser, address indexed beneficiary,
+      uint256 value, uint256 amount);
 
 
-  function EMXICO (uint256 _preSaleStartTime, uint256 _preSaleEndTime,
-                   uint256 _mainSaleStartTime, uint256 _mainSaleEndTime,
-                   uint256 _preSaleRate, uint256 _mainSaleRate,
-                   address _wallet) public {
+  function EMXCrowdsale (uint256 _preSaleStartTime, uint8 _preSaleDays,
+      uint8 _mainSaleDays, uint256 _preSaleRate, uint256 _mainSaleRate,
+      address _wallet) public {
+
     require(_preSaleStartTime >= now);
-    require(_mainSaleStartTime >= _preSaleEndTime);
-    require(_preSaleEndTime >= _preSaleStartTime);
-    require(_mainSaleEndTime >= _mainSaleStartTime);
+    require(_preSaleDays > 0);
+    require(_mainSaleDays > 0);
     require(_preSaleRate > 0);
     require(_mainSaleRate > 0);
     require(_wallet != address(0));
 
     token = createTokenContract();
+
     preSaleStartTime = _preSaleStartTime;
-    preSaleEndTime = _preSaleEndTime;
-    mainSaleStartTime = _mainSaleStartTime;
-    mainSaleEndTime = _mainSaleEndTime;
+    preSaleEndTime = _preSaleStartTime + (_preSaleDays * 86400);
+    mainSaleStartTime = preSaleEndTime + 1;
+    mainSaleEndTime = preSaleEndTime + (_mainSaleDays * 86400);
     preSaleRate = _preSaleRate;
     mainSaleRate = _mainSaleRate;
     wallet = _wallet;
+  }
+
+  function changeWallet(address _wallet) onlyOwner public returns (bool) {
+    wallet = _wallet;
+    return true;
   }
 
   function createTokenContract() internal returns (MintableToken) {
