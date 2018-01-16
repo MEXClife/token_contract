@@ -29,11 +29,15 @@ pragma solidity ^0.4.17;
 import 'zeppelin-solidity/contracts/token/MintableToken.sol';
 import 'zeppelin-solidity/contracts/ownership/CanReclaimToken.sol';
 import 'zeppelin-solidity/contracts/ownership/Claimable.sol';
+import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
 
-contract EMXToken is MintableToken, CanReclaimToken, Claimable  {
+contract MXToken is MintableToken, CanReclaimToken, Claimable, Destructible  {
 
   string public name = 'MX Token';
   string public symbol = 'MX';
   uint8  public decimals = 18;
+
+  // empty constructor
+  function MXToken() public {}
 
 }
