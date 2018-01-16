@@ -28,8 +28,9 @@ contract EMXToken is StandardToken, CanReclaimToken, Claimable  {
   /*
    * Allow the transfer of token to happen once listed on exchangers
    */
-  function allowTransfers() onlyOwner public {
+  function allowTransfers() onlyOwner public returns (bool) {
     transferDisabled = false;
+    return true;
   }
 
   function blackListAddress(address _offender) onlyOwner public returns (bool) {
