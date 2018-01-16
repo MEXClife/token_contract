@@ -9,7 +9,7 @@ contract EMXToken is MintableToken, CanReclaimToken, Claimable  {
   string  public name = 'EMX Token';
   string  public symbol = 'EMX';
   uint8   public decimals = 18;
-  uint256 public totalSupply = 1000000000 ether;  // 1b Ether
+  uint256 public totalSupply = 1000000000 ether;  // 1b EMX tokens
   bool    public transferDisabled = true;         // disable transfer init.
 
   mapping(address => bool) blackListed;           // blackListed addresses

@@ -8,6 +8,6 @@ contract EMXToken is MintableToken, CanReclaimToken, Claimable  {
 
   string public name = 'MX Token';
   string public symbol = 'MX';
-  uint8  public decimals = 8;
+  uint8  public decimals = 18;
 
 }
