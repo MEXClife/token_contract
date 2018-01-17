@@ -19,7 +19,7 @@ We have 22 patent-pending products that are already being use in the market. The
 
 EMX Token is set to be a de-facto standard token in EMS industry. All our products and services are priced in MX, which is an internal token that is pegged to USD dollar. Convertion from EMX to MX can be done via MX P2P Exchanger, where EMX token holders can cash-out via bank transfer to the buyers of MX.
 
-All transactions are one via Ethereum Smart Contract.
+All transactions are done via Ethereum Smart Contract.
 
 # Compiling and Running
 ## Preparations
