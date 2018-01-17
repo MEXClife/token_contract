@@ -1,7 +1,7 @@
 
 var EMXToken = artifacts.require("./EMXToken.sol");
 
-contract('EMXCrowdsale', (accoints) => {
+contract('EMXCrowdsale', (network, accounts) => {
   let symbol = 'EMX';
   let decimals = 18;
 

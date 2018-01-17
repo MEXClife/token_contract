@@ -48,7 +48,7 @@ $ make
 
 ## Migrate the Contracts
 
-To migrate the contract, run test RPC on a separate console, and do `make`
+To migrate the contract, run test RPC on a separate console, and do `make rpc`. Then run `make migrate` to migrate the contracts to the development network.
 ```
 $ make rpc
 $ make migrate
