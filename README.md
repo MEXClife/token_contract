@@ -36,20 +36,46 @@ $ npm install -g truffle
 ## Add Node modules
 initialize all node components by doing node install
 ```
-$ npm install
+$ make init
 ```
 
 ## Compile
 
 Compiling can be done as:
 ```
-$ truffle compile
+$ make
 ```
 
 ## Migrate the Contracts
 
-To migrate the contract, run test RPC and do truffle migrate
+To migrate the contract, run test RPC on a separate console, and do `make`
 ```
-$ testrpc -u 0
-$ truffle migrate
+$ make rpc
+$ make migrate
+```
+
+You should see something similar to below:
+```
+$ make migrate
+truffle migrate --network development
+Using network 'development'.
+
+Running migration: 1_initial_migration.js
+  Deploying Migrations...
+  ... 0x1cb95fca0fed0e69da0339bee98e307c24880366f2752e45e2915e26040af673
+  Migrations: 0x0a9a77197ee38f39e2bfddb9df8da44e6f442b83
+Saving successful migration to network...
+  ... 0x8356ceab873bfd9c7785455b456bbb5be5ee1a9581e20b2f00e6ed7a1b6b0ee5
+Saving artifacts...
+Running migration: 2_deploy_contracts.js
+  Deploying EMXToken...
+  ... 0x1e5f2435f6401b87f9dc120febaae64399e46c4cfcd8971209b543b559083049
+  EMXToken: 0x6534e701e0577baad7f15cb5acdf4ab94ffd8814
+  Deploying EMXCrowdsale...
+  ... 0x4caf47f4730e777997c4361cbe947628ad4d19e0e4fc504e41d5cd09a90afaae
+  EMXCrowdsale: 0x0f69175d6f9150667d5c77f31833f905f5e0e057
+Saving successful migration to network...
+  ... 0xdebc20d6b2b31f4863850e17ec10038cbd2ce94460c4bd5d9e88086af1f25266
+Saving artifacts...
+$
 ```

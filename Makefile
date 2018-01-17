@@ -2,6 +2,9 @@
 compile:
 	truffle compile
 
+init:
+	npm install
+
 migrate:
 	truffle migrate --network development
 
