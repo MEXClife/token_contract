@@ -1,5 +1,6 @@
 
 var EMXCrowdsale = artifacts.require("./EMXCrowdsale.sol");
+var EMXToken = artifacts.require("./EMXToken.sol");
 
 module.exports = function(deployer, network, accounts) {
 
@@ -7,6 +8,8 @@ module.exports = function(deployer, network, accounts) {
   const preSaleDays = 15;
   const mainSaleDays = 45;
   const wallet = accounts[0];
+
+  deployer.deploy(EMXToken, {});
 
   deployer.deploy(EMXCrowdsale,                             // the contract
     preSaleStartTime, preSaleDays, mainSaleDays, wallet,    // the args
