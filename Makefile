@@ -11,6 +11,6 @@ migrate-live:
 rpc:
 	testrpc --port 7545 -u 0
 
-
-
+test: compile
+	truffle test
 
