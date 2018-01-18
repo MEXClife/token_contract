@@ -3,7 +3,7 @@
 import expectThrow from 'zeppelin-solidity/test/helpers/expectThrow';
 import assertRevert from 'zeppelin-solidity/test/helpers/assertRevert';
 
-var EMXToken = artifacts.require("./EMXToken.sol");
+var EMXToken = artifacts.require('./EMXToken.sol');
 
 contract('EMXTokenTest', (accounts) => {
   let symbol = 'EMX';
