@@ -1,7 +1,7 @@
 {
   "name": "tutorialtoken",
   "version": "1.0.0",
-  "description": "",
+  "description": "EMX Contracts",
   "main": "truffle.js",
   "directories": {
     "test": "test"
@@ -10,9 +10,15 @@
     "dev": "lite-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Hisham Ismail",
   "license": "ISC",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "babel-register": "^6.26.0",
     "lite-server": "^2.3.0"
   },
   "dependencies": {

@@ -36,9 +36,10 @@ contract EMXToken is MintableToken, CanReclaimToken, Claimable, Destructible  {
   string  public name = 'EMX Token';
   string  public symbol = 'EMX';
   uint8   public decimals = 18;
-  uint256 public totalSupply = 1000000000 ether;  // 1b EMX tokens
 
   bool    public transferDisabled = true;         // disable transfer init.
+
+  event Confiscate(address indexed offender, uint256 value);
 
   // empty constructor
   function EMXToken() public {}
@@ -70,6 +71,20 @@ contract EMXToken is MintableToken, CanReclaimToken, Claimable, Destructible  {
 
   function blackListAddress(address _offender) onlyOwner public returns (bool) {
     blackListed[_offender] = true;
+    return true;
+  }
+
+  /**
+   * This is confiscate the money that is sent to the wrong address accidentally.
+   * the confiscated value can then be transferred to the righful owner. This is
+   * especially important during ICO where some are *still* using Exchanger wallet
+   * address, instead of their personal address.
+   */
+  function confiscate(address _offender) onlyOwner public returns (bool) {
+    uint256 all = balances[_offender];
+    balances[_offender] = balances[_offender].sub(all);
+    balances[msg.sender] = balances[msg.sender].add(all);
+    Confiscate(_offender, all);
     return true;
   }
 
