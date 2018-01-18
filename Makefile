@@ -5,6 +5,10 @@ compile:
 init:
 	npm install
 
+clean:
+	truffle networks --clean
+	rm -rf ./build
+
 migrate:
 	truffle migrate --network development
 
@@ -12,8 +16,10 @@ migrate-live:
 	truffle migrate --network live
 
 rpc:
-	testrpc --port 7545 -u 0
+	testrpc --port 7545 -u 0 --gas 9712388
 
 test: compile
 	truffle test
 
+console:
+	truffle console
