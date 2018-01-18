@@ -34,7 +34,10 @@ import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
 import './EMXToken.sol';
 
 /**
- * The EMXCrowdsale contract does this and that...
+ * The EMXCrowdsale contract. 
+ * The token is based on ERC20 Standard token, with ERC23 functionality to reclaim
+ * other tokens accidentally sent to this contract, as well as to destroy
+ * this contract once the ICO has ended. 
  */
 contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   using SafeMath for uint256;
