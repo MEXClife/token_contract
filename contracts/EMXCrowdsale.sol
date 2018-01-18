@@ -53,9 +53,12 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   uint256 public startTimePub;
   uint256 public endTimePub;
 
+  uint8 public daysPriv = 15;
+  uint8 public daysPre = 30;
+  uint8 public daysPub = 30;
+
   // stage of actions
   mapping(address => bool) whiteList;
-
 
   // address where funds are collected
   address public wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
@@ -80,25 +83,17 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
    */
   event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
-  function EMXCrowdsale(uint256 _startTimePriv, uint256 _endTimePriv, 
-                        uint256 _startTimePre, uint256 _endTimePre, 
-                        uint256 _startTimePub, uint256 _endTimePub, 
-                        address _wallet) public {
-    require(_startTimePriv >= now);
-    require(_endTimePriv >= _startTimePriv);
-    require(_startTimePre >= _endTimePriv);
-    require(_endTimePre >= _startTimePre);
-    require(_startTimePub >= _endTimePre);
-    require(_endTimePub >= _startTimePub);
+  function EMXCrowdsale(uint256 _startTime, address _wallet) public {
+    require(_startTime >= now);
     require(_wallet != address(0));
 
     token = createTokenContract();
-    startTimePriv = _startTimePriv;
-    endTimePriv = _endTimePriv;
-    startTimePre = _startTimePre;
-    endTimePre = _endTimePre;
-    startTimePub = _startTimePub;
-    endTimePub = _endTimePub;
+    startTimePriv = _startTime;
+    endTimePriv = startTimePriv + (daysPriv * 86400);
+    startTimePre = endTimePriv + 1;
+    endTimePre = endTimePriv + (daysPre * 86400);
+    startTimePub = endTimePre + 1;
+    endTimePub = endTimePre + (daysPub * 86400);
     wallet = _wallet;
   }
 

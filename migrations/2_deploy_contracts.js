@@ -22,19 +22,9 @@ module.exports = function(deployer, network, accounts) {
   // EMXCrowdsale (uint256 _startTime, uint256 _endTime, 
   //                          uint256 _rate, address _wallet,
   //                          uint256 _cap) 
-  const startPriv = web3.eth.getBlock(web3.eth.blockNumber).timestamp + 10;
-  const endPriv = startPriv + (15 * 86400);
-  const startPre = endPriv + 1;
-  const endPre = endPriv + (30 * 86400);
-  const startPub = endPre + 1;
-  const endPub = endPre + (30 * 86400);
+  const start = web3.eth.getBlock(web3.eth.blockNumber).timestamp + 10;
   const wallet = accounts[0];
 
-  deployer.deploy(EMXCrowdsale,
-                  startPriv, endPriv,
-                  startPre, endPre,
-                  startPub, endPub, 
-                  wallet, 
-                  {});
+  deployer.deploy(EMXCrowdsale, start, wallet, {});
 
 };
