@@ -123,7 +123,7 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     // calculate token amount to be created
     uint256 rate = 0;
     if (now <= endTimePriv) {
-      require(whiteList[msg.sender] == true);
+      require(whiteList[beneficiary] == true);
       rate = ratePriv;
     } else if (now <= endTimePre) {
       rate = ratePre;
@@ -160,6 +160,5 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     bool capReached = weiRaised >= cap;
     return now > endTimePub || capReached;
   }
-
 
 }
