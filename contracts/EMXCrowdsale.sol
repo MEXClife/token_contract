@@ -58,9 +58,9 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   address public wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
 
   // how many token units a buyer gets per wei
-  uint256 public ratePriv;
-  uint256 public ratePre;
-  uint256 public ratePub;
+  uint256 public ratePriv = 4000;
+  uint256 public ratePre = 3500;
+  uint256 public ratePub = 3000;
 
   // amount of raised money in wei
   uint256 public weiRaised;
@@ -81,7 +81,6 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   function EMXCrowdsale(uint256 _startTimePriv, uint256 _endTimePriv, 
                         uint256 _startTimePre, uint256 _endTimePre, 
                         uint256 _startTimePub, uint256 _endTimePub, 
-                        uint256 _ratePriv, uint256 _ratePre, uint256 _ratePub, 
                         address _wallet) public {
     require(_startTimePriv >= now);
     require(_endTimePriv >= _startTimePriv);
@@ -89,9 +88,6 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     require(_endTimePre >= _startTimePre);
     require(_startTimePub >= _endTimePre);
     require(_endTimePub >= _startTimePub);
-    require(_ratePriv > 0);
-    require(_ratePre > 0);
-    require(_ratePub > 0);
     require(_wallet != address(0));
 
     token = createTokenContract();
@@ -101,9 +97,6 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     endTimePre = _endTimePre;
     startTimePub = _startTimePub;
     endTimePub = _endTimePub;
-    ratePriv = _ratePriv;
-    ratePre = _ratePre;
-    ratePub = _ratePub;
     wallet = _wallet;
   }
 

@@ -28,16 +28,12 @@ module.exports = function(deployer, network, accounts) {
   const endPre = endPriv + (30 * 86400);
   const startPub = endPre + 1;
   const endPub = endPre + (30 * 86400);
-  const ratePriv = 4000;
-  const ratePre = 3500;
-  const ratePub = 3000;
   const wallet = accounts[0];
 
   deployer.deploy(EMXCrowdsale,
                   startPriv, endPriv,
                   startPre, endPre,
                   startPub, endPub, 
-                  ratePriv, ratePre, ratePub, 
                   wallet, 
                   {});
 
