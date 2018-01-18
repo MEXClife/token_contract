@@ -53,6 +53,9 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   uint256 public startTimePub;
   uint256 public endTimePub;
 
+  // stage of actions
+  mapping(address => bool) whiteList;
+
 
   // address where funds are collected
   address public wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
@@ -76,7 +79,6 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
    * @param amount amount of tokens purchased
    */
   event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
-
 
   function EMXCrowdsale(uint256 _startTimePriv, uint256 _endTimePriv, 
                         uint256 _startTimePre, uint256 _endTimePre, 
@@ -106,6 +108,11 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     return new MintableToken();
   }
 
+  function addEarlyBacker(address _earlyBacker) onlyOwner public returns (bool) {
+    whiteList[_earlyBacker] = true;
+    return true;
+  }
+
   // fallback function can be used to buy tokens
   function () external payable {
     buyTokens(msg.sender);
@@ -121,6 +128,7 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     // calculate token amount to be created
     uint256 rate = 0;
     if (now <= endTimePriv) {
+      require(whiteList[msg.sender] == true);
       rate = ratePriv;
     } else if (now <= endTimePre) {
       rate = ratePre;
