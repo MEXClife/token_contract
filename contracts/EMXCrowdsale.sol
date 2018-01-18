@@ -27,45 +27,41 @@ pragma solidity ^0.4.17;
 
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 import 'zeppelin-solidity/contracts/token/MintableToken.sol';
-import 'zeppelin-solidity/contracts/ownership/CanReclaimToken.sol';
 import 'zeppelin-solidity/contracts/ownership/Claimable.sol';
+import 'zeppelin-solidity/contracts/ownership/CanReclaimToken.sol';
+import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
 
 import './EMXToken.sol';
 
 /**
- * The EMXICO ICO Contract.
- * It is based on ERC20 Standard token, with ERC23 functionality to reclaim
- * other tokens accidentally sent to this contract, as well as to destroy
- * this contract once the ICO has ended.
+ * The EMXCrowdsale contract does this and that...
  */
-contract EMXCrowdsale is Claimable, CanReclaimToken  {
-
+contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   using SafeMath for uint256;
 
   // The token being sold
   MintableToken public token;
 
-  // days of the ICO
-  uint8 preSaleDays = 15;
-  uint8 mainSaleDays = 45;
+  // start and end timestamps where investments are allowed (both inclusive)
+  uint256 public startTimePriv;
+  uint256 public endTimePriv;
+  uint256 public startTimePre;
+  uint256 public endTimePre;
+  uint256 public startTimePub;
+  uint256 public endTimePub;
 
-  // start and end timestamps where crowdsale are allowed (both inclusive)
-  uint256 public preSaleStartTime = 0;
-  uint256 public preSaleEndTime = 0;
-  uint256 public mainSaleStartTime = 0;
-  uint256 public mainSaleEndTime = 0;
 
   // address where funds are collected
   address public wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
 
-  // total wei raised
-  uint256 weiRaised = 0;
-  uint256 maxRaised = 200000 ether;               // target raised
-
   // how many token units a buyer gets per wei
-  uint256 public preSaleRate = 3500;
-  uint256 public mainSaleRate = 3000;
+  uint256 public rate;
 
+  // amount of raised money in wei
+  uint256 public weiRaised;
+
+  // cap for crowdsale
+  uint256 public cap;
 
   /**
    * event for token purchase logging
@@ -74,75 +70,40 @@ contract EMXCrowdsale is Claimable, CanReclaimToken  {
    * @param value weis paid for purchase
    * @param amount amount of tokens purchased
    */
-  event TokenPurchase(address indexed purchaser, address indexed beneficiary,
-      uint256 value, uint256 amount);
+  event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
 
-  function EMXCrowdsale (uint256 _preSaleStartTime, uint8 _preSaleDays,
-      uint8 _mainSaleDays, address _wallet) public {
-
-    require(_preSaleStartTime >= now);
-    require(_preSaleDays > 0);
-    require(_mainSaleDays > 0);
+  function EMXCrowdsale(uint256 _startTimePriv, uint256 _endTimePriv, 
+                        uint256 _startTimePre, uint256 _endTimePre, 
+                        uint256 _startTimePub, uint256 _endTimePub, 
+                        uint256 _rate, address _wallet,
+                        uint256 _cap) public {
+    require(_startTimePriv >= now);
+    require(_endTimePriv >= _startTimePriv);
+    require(_startTimePre >= _endTimePriv);
+    require(_endTimePre >= _startTimePre);
+    require(_startTimePub >= _endTimePre);
+    require(_endTimePub >= _startTimePub);
+    require(_rate > 0);
     require(_wallet != address(0));
+    require(_cap > 0);
 
     token = createTokenContract();
-
-    preSaleDays = _preSaleDays;
-    mainSaleDays = _mainSaleDays;
-
-    preSaleStartTime = _preSaleStartTime;
-    preSaleEndTime = preSaleStartTime + (preSaleDays * 86400);
-    mainSaleStartTime = preSaleEndTime + 1;
-    mainSaleEndTime = preSaleEndTime + (mainSaleDays * 86400);
-
+    startTimePriv = _startTimePriv;
+    endTimePriv = _endTimePriv;
+    startTimePre = _startTimePre;
+    endTimePre = _endTimePre;
+    startTimePub = _startTimePub;
+    endTimePub = _endTimePub;
+    rate = _rate;
     wallet = _wallet;
+    cap = _cap;
   }
 
-  // begin setter functions
-
-  function updatePreSaleDays(uint8 _days) onlyOwner public returns (bool) {
-    preSaleDays = _days;
-    preSaleEndTime = preSaleStartTime + (preSaleDays * 86400);
-    mainSaleStartTime = preSaleEndTime + 1;
-    mainSaleEndTime = preSaleEndTime + (mainSaleDays * 86400);
-    return true;
-  }
-
-  function updateMainSaleDays(uint8 _days) onlyOwner public returns (bool) {
-    mainSaleDays = _days;
-    mainSaleEndTime = preSaleEndTime + (mainSaleDays * 86400);
-    return true;
-  }
-
-  function updateCrowdsaleTime(uint256 _time) onlyOwner public returns (bool) {
-    preSaleStartTime = _time;
-    preSaleEndTime = preSaleStartTime + (preSaleDays * 86400);
-    mainSaleStartTime = preSaleEndTime + 1;
-    mainSaleEndTime = preSaleEndTime + (mainSaleDays * 86400);
-    return true;
-  }
-
-  function updateWallet(address _wallet) onlyOwner public returns (bool) {
-    wallet = _wallet;
-    return true;
-  }
-
-  function updatePreSaleRate(uint256 _rate) onlyOwner public returns (bool) {
-    preSaleRate = _rate;
-    return true;
-  }
-
-  function updateMainSaleRate(uint256 _rate) onlyOwner public returns (bool) {
-    mainSaleRate = _rate;
-    return true;
-  }
-
-  // end of setter functions
-
-  // @return true if crowdsale event has ended
-  function hasEnded() public view returns (bool) {
-    return now > mainSaleEndTime;
+  // creates the token to be sold.
+  // override this method to have crowdsale of a specific mintable token.
+  function createTokenContract() internal returns (MintableToken) {
+    return new MintableToken();
   }
 
   // fallback function can be used to buy tokens
@@ -157,14 +118,6 @@ contract EMXCrowdsale is Claimable, CanReclaimToken  {
 
     uint256 weiAmount = msg.value;
 
-    // check for rates
-    uint256 rate = 0;
-    if (now <= mainSaleStartTime) {
-      rate = preSaleRate;
-    } else {
-      rate = mainSaleRate;
-    }
-
     // calculate token amount to be created
     uint256 tokens = weiAmount.mul(rate);
 
@@ -177,13 +130,6 @@ contract EMXCrowdsale is Claimable, CanReclaimToken  {
     forwardFunds();
   }
 
-  /****************************************************************************
-   * Internal functions
-   */
-  function createTokenContract() internal returns (MintableToken) {
-    return new EMXToken();
-  }
-
   // send ether to the fund collection wallet
   // override to create custom fund forwarding mechanisms
   function forwardFunds() internal {
@@ -192,10 +138,17 @@ contract EMXCrowdsale is Claimable, CanReclaimToken  {
 
   // @return true if the transaction can buy tokens
   function validPurchase() internal view returns (bool) {
-    bool withinPeriod = now >= preSaleStartTime && now <= mainSaleEndTime;
+    bool withinPeriod = now >= startTimePriv && now <= endTimePub;
     bool nonZeroPurchase = msg.value != 0;
-    bool withinMax = maxRaised <= weiRaised;
-    return withinPeriod && nonZeroPurchase && withinMax;
+    bool withinCap = weiRaised.add(msg.value) <= cap;
+    return withinPeriod && nonZeroPurchase && withinCap;
   }
+
+  // @return true if crowdsale event has ended
+  function hasEnded() public view returns (bool) {
+    bool capReached = weiRaised >= cap;
+    return now > endTimePub || capReached;
+  }
+
 
 }
