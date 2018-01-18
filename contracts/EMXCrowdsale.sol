@@ -64,7 +64,7 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   uint256 public weiRaised;
 
   // cap for crowdsale
-  uint256 public cap;
+  uint256 public cap = 200000 ether;
 
   /**
    * event for token purchase logging
@@ -79,8 +79,7 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   function EMXCrowdsale(uint256 _startTimePriv, uint256 _endTimePriv, 
                         uint256 _startTimePre, uint256 _endTimePre, 
                         uint256 _startTimePub, uint256 _endTimePub, 
-                        uint256 _rate, address _wallet,
-                        uint256 _cap) public {
+                        uint256 _rate, address _wallet) public {
     require(_startTimePriv >= now);
     require(_endTimePriv >= _startTimePriv);
     require(_startTimePre >= _endTimePriv);
@@ -89,7 +88,6 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     require(_endTimePub >= _startTimePub);
     require(_rate > 0);
     require(_wallet != address(0));
-    require(_cap > 0);
 
     token = createTokenContract();
     startTimePriv = _startTimePriv;

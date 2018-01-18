@@ -30,13 +30,12 @@ module.exports = function(deployer, network, accounts) {
   const endPub = endPre + (30 * 86400);
   const rate = 3500;
   const wallet = accounts[0];
-  const cap = web3.toWei(200000, 'ether');
 
   deployer.deploy(EMXCrowdsale,
                   startPriv, endPriv,
                   startPre, endPre,
                   startPub, endPub, 
-                  rate, wallet, cap, 
+                  rate, wallet, 
                   {});
 
 };
