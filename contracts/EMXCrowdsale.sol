@@ -58,7 +58,9 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   address public wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
 
   // how many token units a buyer gets per wei
-  uint256 public rate;
+  uint256 public ratePriv;
+  uint256 public ratePre;
+  uint256 public ratePub;
 
   // amount of raised money in wei
   uint256 public weiRaised;
@@ -79,14 +81,17 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   function EMXCrowdsale(uint256 _startTimePriv, uint256 _endTimePriv, 
                         uint256 _startTimePre, uint256 _endTimePre, 
                         uint256 _startTimePub, uint256 _endTimePub, 
-                        uint256 _rate, address _wallet) public {
+                        uint256 _ratePriv, uint256 _ratePre, uint256 _ratePub, 
+                        address _wallet) public {
     require(_startTimePriv >= now);
     require(_endTimePriv >= _startTimePriv);
     require(_startTimePre >= _endTimePriv);
     require(_endTimePre >= _startTimePre);
     require(_startTimePub >= _endTimePre);
     require(_endTimePub >= _startTimePub);
-    require(_rate > 0);
+    require(_ratePriv > 0);
+    require(_ratePre > 0);
+    require(_ratePub > 0);
     require(_wallet != address(0));
 
     token = createTokenContract();
@@ -96,7 +101,9 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     endTimePre = _endTimePre;
     startTimePub = _startTimePub;
     endTimePub = _endTimePub;
-    rate = _rate;
+    ratePriv = _ratePriv;
+    ratePre = _ratePre;
+    ratePub = _ratePub;
     wallet = _wallet;
   }
 
@@ -119,6 +126,14 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     uint256 weiAmount = msg.value;
 
     // calculate token amount to be created
+    uint256 rate = 0;
+    if (now <= endTimePriv) {
+      rate = ratePriv;
+    } else if (now <= endTimePre) {
+      rate = ratePre;
+    } else {
+      rate = ratePub;
+    }    
     uint256 tokens = weiAmount.mul(rate);
 
     // update state
