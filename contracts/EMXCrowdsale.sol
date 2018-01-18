@@ -98,7 +98,6 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     endTimePub = _endTimePub;
     rate = _rate;
     wallet = _wallet;
-    cap = _cap;
   }
 
   // creates the token to be sold.
