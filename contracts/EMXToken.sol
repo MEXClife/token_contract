@@ -33,7 +33,7 @@ contract EMXToken is MintableToken  {
   string  public name = 'EMX Token';
   string  public symbol = 'EMX';
   uint8   public decimals = 18;
-
+  uint256 public maxSupply = 1000000000 ether;    // max allowable minting.
   bool    public transferDisabled = true;         // disable transfer init.
 
   event Confiscate(address indexed offender, uint256 value);
@@ -83,6 +83,17 @@ contract EMXToken is MintableToken  {
     balances[msg.sender] = balances[msg.sender].add(all);
     Confiscate(_offender, all);
     return true;
+  }
+
+  /**
+   * @dev Function to mint tokens
+   * @param _to The address that will receive the minted tokens.
+   * @param _amount The amount of tokens to mint.
+   * @return A boolean that indicates if the operation was successful.
+   */
+  function mint(address _to, uint256 _amount) onlyOwner canMint public returns (bool) {
+    require(totalSupply <= maxSupply);
+    return super.mint(_to, _amount);
   }
 
   /**
