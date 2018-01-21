@@ -170,7 +170,7 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     if (now <= endTimePriv) {
       require(earlyBacker[beneficiary] == true);
       rate = ratePriv;
-    } else if (now >= endTimePriv && now <= endTimePre) {
+    } else if (now > endTimePriv && now <= endTimePre) {
       rate = ratePre;
     } else {
       rate = ratePub;
