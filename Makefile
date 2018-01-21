@@ -9,6 +9,9 @@ clean:
 	truffle networks --clean
 	rm -rf ./build
 
+reset: clean
+	truffle migrate --reset
+
 migrate:
 	truffle migrate --network development
 
@@ -19,7 +22,7 @@ rpc:
 	testrpc --port 7545 -u 0 --gas 9712388
 
 test: compile
-	truffle test
+	truffle test --network development
 
 console:
-	truffle console
+	truffle console --network development
