@@ -34,10 +34,10 @@ import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
 import './EMXToken.sol';
 
 /**
- * The EMXCrowdsale contract. 
+ * The EMXCrowdsale contract.
  * The token is based on ERC20 Standard token, with ERC23 functionality to reclaim
  * other tokens accidentally sent to this contract, as well as to destroy
- * this contract once the ICO has ended. 
+ * this contract once the ICO has ended.
  */
 contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   using SafeMath for uint256;
@@ -57,8 +57,8 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   uint8 public daysPre = 30;
   uint8 public daysPub = 30;
 
-  // stage of actions
-  mapping(address => bool) whiteList;
+  // early backer of EMX
+  mapping(address => bool) earlyBacker;
 
   // address where funds are collected
   address public wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
@@ -100,12 +100,20 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   // creates the token to be sold.
   // override this method to have crowdsale of a specific mintable token.
   function createTokenContract() internal returns (MintableToken) {
-    return new MintableToken();
+    return new EMXToken();
   }
 
-  function addEarlyBacker(address _earlyBacker) onlyOwner public returns (bool) {
-    whiteList[_earlyBacker] = true;
+  function addEarlyBacker(address _sender) onlyOwner public returns (bool) {
+    earlyBacker[_sender] = true;
     return true;
+  }
+
+  function isEarlyBacker(address _sender) public view returns (bool) {
+    return earlyBacker[_sender];
+  }
+
+  function totalRaised() public view returns (uint256) {
+    return weiRaised;
   }
 
   // fallback function can be used to buy tokens
@@ -123,13 +131,13 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     // calculate token amount to be created
     uint256 rate = 0;
     if (now <= endTimePriv) {
-      require(whiteList[beneficiary] == true);
+      require(earlyBacker[beneficiary] == true);
       rate = ratePriv;
     } else if (now <= endTimePre) {
       rate = ratePre;
     } else {
       rate = ratePub;
-    }    
+    }
     uint256 tokens = weiAmount.mul(rate);
 
     // update state
