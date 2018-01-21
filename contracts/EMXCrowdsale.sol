@@ -116,6 +116,43 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     return weiRaised;
   }
 
+  /**
+   * @dev for testing purposes.
+   * Reset the time for Pre-Sale
+   * @return rate for Pre-Sale
+   */
+  function setEndTimePriv(uint256 _endTime) onlyOwner public returns (uint256) {
+    endTimePriv = _endTime;
+
+    // also recalculate other stages
+    startTimePre = endTimePriv + 1;
+    endTimePre = endTimePriv + (daysPre * 86400);
+    startTimePub = endTimePre + 1;
+    endTimePub = endTimePre + (daysPub * 86400);
+
+    return ratePre;
+  }
+
+  /**
+   * @dev for testing purposes.
+   * Reset the time for Public Sale
+   * @return rate for Public Sale
+   */
+  function setEndTimePre(uint256 _endTime) onlyOwner public returns (uint256) {
+    endTimePre = _endTime;
+
+    // also recalculate other stages
+    startTimePub = endTimePre + 1;
+    endTimePub = endTimePre + (daysPub * 86400);
+
+    return ratePub;
+  }
+
+  function endCrowdsale() onlyOwner public returns (bool) {
+    endTimePub = now - 1;
+    return true;
+  }
+
   // fallback function can be used to buy tokens
   function () external payable {
     buyTokens(msg.sender);
@@ -133,7 +170,7 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     if (now <= endTimePriv) {
       require(earlyBacker[beneficiary] == true);
       rate = ratePriv;
-    } else if (now <= endTimePre) {
+    } else if (now >= endTimePriv && now <= endTimePre) {
       rate = ratePre;
     } else {
       rate = ratePub;
