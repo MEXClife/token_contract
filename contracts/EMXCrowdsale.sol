@@ -72,7 +72,7 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   uint256 public weiRaised;
 
   // cap for crowdsale
-  uint256 public cap = 200000 ether;
+  uint256 public cap = 300000 ether;
 
   /**
    * event for token purchase logging
