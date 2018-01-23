@@ -36,7 +36,7 @@ contract('EMXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(4000, 'ether'), bal.toString('10'), 'Should be 4000 ether of EMX');
   });
 
-  it('should give weiRased of 2 Ether in Private Sale', async () => {
+  it('should give weiRased of 2 Ether in Pre-Sale', async () => {
     let now = web3.eth.getBlock(web3.eth.blockNumber).timestamp;
     await crowdsale.setEndTimePriv(now - 1, {from: acc0});
 
@@ -57,7 +57,7 @@ contract('EMXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(7500, 'ether'), bal.toString('10'), 'Should be 7500 ether of EMX');
   });
 
-  it('should give weiRased of 3 Ether in Private Sale', async () => {
+  it('should give weiRased of 3 Ether in Public Sale', async () => {
     let now = web3.eth.getBlock(web3.eth.blockNumber).timestamp;
     await crowdsale.setEndTimePre(now - 1, {from: acc0});
 
@@ -68,7 +68,7 @@ contract('EMXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(3, 'ether'), raised.toString('10'), 'should be 1 ether raised');
   });
 
-  it('should have 10,500 EMX for 1 Ether in Private Sale', async () => {
+  it('should have 10,500 EMX for 3 Ether in total Sale', async () => {
     // get the balance
     let bal = await token.balanceOf(acc1);
     assert.equal(web3.toWei(10500, 'ether'), bal.toString('10'), 'Should be 10500 ether of EMX');
