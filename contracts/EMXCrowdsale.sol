@@ -59,6 +59,7 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
 
   // early backer of EMX
   mapping(address => bool) earlyBacker;
+  mapping(address => bool) preSaleBacker;
 
   // address where funds are collected
   address public wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
@@ -103,13 +104,12 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     return new EMXToken();
   }
 
-  function addEarlyBacker(address _sender) onlyOwner public returns (bool) {
-    earlyBacker[_sender] = true;
-    return true;
-  }
-
   function isEarlyBacker(address _sender) public view returns (bool) {
     return earlyBacker[_sender];
+  }
+
+  function isPreSaleBacker(address _sender) public view returns (bool) {
+    return preSaleBacker[_sender];
   }
 
   function totalRaised() public view returns (uint256) {
@@ -168,9 +168,10 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     // calculate token amount to be created
     uint256 rate = 0;
     if (now <= endTimePriv) {
-      require(earlyBacker[beneficiary] == true);
+      earlyBacker[beneficiary] == true;
       rate = ratePriv;
     } else if (now > endTimePriv && now <= endTimePre) {
+      preSaleBacker[beneficiary] == true;
       rate = ratePre;
     } else {
       rate = ratePub;
