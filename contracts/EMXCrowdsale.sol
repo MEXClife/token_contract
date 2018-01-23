@@ -168,10 +168,10 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     // calculate token amount to be created
     uint256 rate = 0;
     if (now <= endTimePriv) {
-      earlyBacker[beneficiary] == true;
+      earlyBacker[beneficiary] = true;
       rate = ratePriv;
     } else if (now > endTimePriv && now <= endTimePre) {
-      preSaleBacker[beneficiary] == true;
+      preSaleBacker[beneficiary] = true;
       rate = ratePre;
     } else {
       rate = ratePub;
