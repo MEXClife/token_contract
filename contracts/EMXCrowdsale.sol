@@ -58,7 +58,7 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   // cap for crowdsale
   uint256 public cap = 300000 ether;
 
-  // stages and rates are private variables.
+  // mappig of our days, and rates.
   mapping(uint8 => uint256) daysRates;
 
   /**
@@ -80,7 +80,7 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     startTime = _startTime;
     endTime = startTime + 80 days;
 
-    // set the days lapesed, and rates.
+    // set the days lapsed, and rates for the priod since startTime.
     daysRates[15] = 4000;
     daysRates[45] = 3500;
     daysRates[65] = 3250;
