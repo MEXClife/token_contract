@@ -53,10 +53,10 @@ contract('MEXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(1, 'ether'), raised.toString('10'), 'should be 1 ether raised');
   });
 
-  it('should have 4000 EMX for 1 Ether in Private Sale', async () => {
+  it('should have 4000 MEXC for 1 Ether in Private Sale', async () => {
     // get the balance
     let bal = await token.balanceOf(acc1);
-    assert.equal(web3.toWei(4000, 'ether'), bal.toString('10'), 'Should be 4000 ether of EMX');
+    assert.equal(web3.toWei(4000, 'ether'), bal.toString('10'), 'Should be 4000 ether of MEXC');
   });
 
   it('should give weiRased of 3 Ether in Stage 1 Sale', async () => {
@@ -67,10 +67,10 @@ contract('MEXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(3, 'ether'), raised.toString('10'), 'should be 3 ether raised');
   });
 
-  it('should have 12000 EMX for 3 Ether in Private Sale', async () => {
+  it('should have 12000 MEXC for 3 Ether in Private Sale', async () => {
     // get the balance
     let bal = await token.balanceOf(acc1);
-    assert.equal(web3.toWei(12000, 'ether'), bal.toString('10'), 'Should be 12000 ether of EMX');
+    assert.equal(web3.toWei(12000, 'ether'), bal.toString('10'), 'Should be 12000 ether of MEXC');
   });
 
   it('should change the time to stage 2, changed the rate to 3500', async () => {
@@ -83,7 +83,7 @@ contract('MEXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(4, 'ether'), raised.toString('10'), 'should be 4 ether raised');
 
     let bal = await token.balanceOf(acc2);
-    assert.equal(web3.toWei(3500, 'ether'), bal.toString('10'), 'Should be 3500 ether of EMX');
+    assert.equal(web3.toWei(3500, 'ether'), bal.toString('10'), 'Should be 3500 ether of MEXC');
   });
 
   it('should change the time to stage 3, changed the rate to 3250', async () => {
@@ -96,7 +96,7 @@ contract('MEXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(5, 'ether'), raised.toString('10'), 'should be 5 ether raised');
 
     let bal = await token.balanceOf(acc2);
-    assert.equal(web3.toWei(6750, 'ether'), bal.toString('10'), 'Should be 6750 ether of EMX');
+    assert.equal(web3.toWei(6750, 'ether'), bal.toString('10'), 'Should be 6750 ether of MEXC');
   });
 
   it('should change the time to stage 4, changed the rate to 3125', async () => {
@@ -109,7 +109,7 @@ contract('MEXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(6, 'ether'), raised.toString('10'), 'should be 6 ether raised');
 
     let bal = await token.balanceOf(acc2);
-    assert.equal(web3.toWei(9875, 'ether'), bal.toString('10'), 'Should be 9875 ether of EMX');
+    assert.equal(web3.toWei(9875, 'ether'), bal.toString('10'), 'Should be 9875 ether of MEXC');
   });
 
   it('should change the time to stage 5, changed the rate to 3000', async () => {
@@ -121,7 +121,7 @@ contract('MEXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(7, 'ether'), raised.toString('10'), 'should be 7 ether raised');
 
     let bal = await token.balanceOf(acc2);
-    assert.equal(web3.toWei(12875, 'ether'), bal.toString('10'), 'Should be 12875 ether of EMX');
+    assert.equal(web3.toWei(12875, 'ether'), bal.toString('10'), 'Should be 12875 ether of MEXC');
   });
 
   it('should give errors when sending as time has ended', async () => {

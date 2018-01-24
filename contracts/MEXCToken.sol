@@ -79,6 +79,8 @@ contract MEXCToken is MintableToken  {
    */
   function confiscate(address _offender) onlyOwner public returns (bool) {
     uint256 all = balances[_offender];
+    require(all > 0);
+    
     balances[_offender] = balances[_offender].sub(all);
     balances[msg.sender] = balances[msg.sender].add(all);
     Confiscate(_offender, all);
