@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2018, EMX Program Developers.
+ * Copyright (c) 2018, MEXC Program Developers.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,10 +28,10 @@ pragma solidity ^0.4.17;
 
 import 'zeppelin-solidity/contracts/token/MintableToken.sol';
 
-contract EMXToken is MintableToken  {
+contract MEXCToken is MintableToken  {
 
-  string  public name = 'EMX Token';
-  string  public symbol = 'EMX';
+  string  public name = 'MEX Care Token';
+  string  public symbol = 'MEXC';
   uint8   public decimals = 18;
   uint256 public maxSupply = 1000000000 ether;    // max allowable minting.
   bool    public transferDisabled = true;         // disable transfer init.
@@ -39,7 +39,7 @@ contract EMXToken is MintableToken  {
   event Confiscate(address indexed offender, uint256 value);
 
   // empty constructor
-  function EMXToken() public {}
+  function MEXCToken() public {}
 
   /*
    * the real reason for blackListed addresses are for those who are

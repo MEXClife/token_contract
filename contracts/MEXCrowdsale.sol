@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2018, EMX Program Developers.
+ * Copyright (c) 2018, MEXC Program Developers.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@ import 'zeppelin-solidity/contracts/ownership/Claimable.sol';
 import 'zeppelin-solidity/contracts/ownership/CanReclaimToken.sol';
 import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
 
-import './EMXToken.sol';
+import './MEXCToken.sol';
 
 /**
  * The EMXCrowdsale contract.
@@ -39,7 +39,7 @@ import './EMXToken.sol';
  * other tokens accidentally sent to this contract, as well as to destroy
  * this contract once the ICO has ended.
  */
-contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
+contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
   using SafeMath for uint256;
 
   // The token being sold
@@ -71,7 +71,7 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   event TokenPurchase(address indexed purchaser, address indexed beneficiary, 
                       uint256 value, uint256 amount);
 
-  function EMXCrowdsale(uint256 _startTime, address _wallet) public {
+  function MEXCrowdsale(uint256 _startTime, address _wallet) public {
     require(_startTime >= now);
     require(_wallet != address(0));
 
@@ -91,7 +91,7 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   // creates the token to be sold.
   // override this method to have crowdsale of a specific mintable token.
   function createTokenContract() internal returns (MintableToken) {
-    return new EMXToken();
+    return new MEXCToken();
   }
 
   function totalRaised() public view returns (uint256) {

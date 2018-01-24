@@ -2,11 +2,18 @@ require('babel-register')({
     ignore: /node_modules\/(?!zeppelin-solidity)/
 });
 require('babel-polyfill');
+var HDWalletProvider = require("truffle-hdwallet-provider");
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
   // for more about customizing your Truffle configuration!
   networks: {
+    ropsten: {
+      provider: function() {
+        return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/<INFURA_Access_Token>")
+      },
+      network_id: 3
+    },
     development: {
       host: "127.0.0.1",
       port: 7545,

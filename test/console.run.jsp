@@ -2,8 +2,8 @@
 
 let acc0 = web3.eth.accounts[0];
 let acc1 = web3.eth.accounts[1];
-EMXCrowdsale.deployed().then(inst => { crowdsale = inst });
-EMXToken.deployed().then(inst => { token = inst });
+MEXCrowdsale.deployed().then(inst => { crowdsale = inst });
+MEXCToken.deployed().then(inst => { token = inst });
 
 crowdsale.addEarlyBacker(acc1).then(res => { resp = res });
 crowdsale.isEarlyBacker(acc1).then(res => { resp = res });
