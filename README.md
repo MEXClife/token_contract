@@ -15,9 +15,9 @@ EMS industry is a huge market, and pretty much controlled by a few group of comp
 
 We have 22 patent-pending products that are already being use in the market. These products are the results of our 20 years of Research and Development, thoroughly tested in EMS facilities and hospitals. We also have 6 industrial designs, and 5 copyrights that can be monetize further through EMX eco-system.
 
-# EMX Token
+# MEXC Token
 
-EMX Token is set to be a de-facto standard token in EMS industry. All our products and services are priced in MX, which is an internal token that is pegged to USD dollar. Convertion from EMX to MX can be done via MX P2P Exchanger, where MEXC token holders can cash-out via bank transfer to the buyers of MX.
+MEXC Token is set to be a de-facto standard token in EMS industry. All our products and services are priced in MX, which is an internal token that is pegged to USD dollar. Convertion from MEXC to MX can be done via MX P2P Exchanger, where MEXC token holders can cash-out via bank transfer to the buyers of MX.
 
 All transactions are done via Ethereum Smart Contract.
 
