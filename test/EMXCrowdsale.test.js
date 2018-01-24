@@ -49,9 +49,8 @@ contract('EMXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(12000, 'ether'), bal.toString('10'), 'Should be 12000 ether of EMX');
   });
 
-  it('should change the time to stage 2, change the rate to 3500', async () => {
-    let now = web3.eth.getBlock(web3.eth.blockNumber).timestamp;
-    await increaseTime(now + 15 * 86400);
+  it('should change the time to stage 2, changed the rate to 3500', async () => {
+    await increaseTime(15 * 86400);
 
     await crowdsale.sendTransaction({ from: acc2, value: web3.toWei(1, 'ether') });
 
@@ -63,5 +62,46 @@ contract('EMXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(3500, 'ether'), bal.toString('10'), 'Should be 3500 ether of EMX');
   });
 
+  it('should change the time to stage 3, changed the rate to 3250', async () => {
+    await increaseTime(30 * 86400);
 
+    await crowdsale.sendTransaction({ from: acc2, value: web3.toWei(1, 'ether') });
+
+    // wei raised should be 5 ether
+    let raised = await crowdsale.totalRaised({from: acc0});
+    assert.equal(web3.toWei(5, 'ether'), raised.toString('10'), 'should be 5 ether raised');
+
+    let bal = await token.balanceOf(acc2);
+    assert.equal(web3.toWei(6750, 'ether'), bal.toString('10'), 'Should be 6750 ether of EMX');
+  });
+
+  it('should change the time to stage 4, changed the rate to 3125', async () => {
+    await increaseTime(20 * 86400);
+
+    await crowdsale.sendTransaction({ from: acc2, value: web3.toWei(1, 'ether') });
+
+    // wei raised should be 6 ether
+    let raised = await crowdsale.totalRaised({from: acc0});
+    assert.equal(web3.toWei(6, 'ether'), raised.toString('10'), 'should be 6 ether raised');
+
+    let bal = await token.balanceOf(acc2);
+    assert.equal(web3.toWei(9875, 'ether'), bal.toString('10'), 'Should be 9875 ether of EMX');
+  });
+
+  it('should change the time to stage 5, changed the rate to 3000', async () => {
+    await increaseTime(10 * 86400);
+    await crowdsale.sendTransaction({ from: acc2, value: web3.toWei(1, 'ether') });
+
+    // wei raised should be 7 ether
+    let raised = await crowdsale.totalRaised({from: acc0});
+    assert.equal(web3.toWei(7, 'ether'), raised.toString('10'), 'should be 7 ether raised');
+
+    let bal = await token.balanceOf(acc2);
+    assert.equal(web3.toWei(12875, 'ether'), bal.toString('10'), 'Should be 12875 ether of EMX');
+  });
+
+  it('should give errors when sending as time has ended', async () => {
+    await increaseTime(5 * 86400);
+    await expectThrow(crowdsale.sendTransaction({ from: acc2, value: web3.toWei(1, 'ether') }));
+  });
 });
