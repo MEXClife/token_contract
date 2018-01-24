@@ -46,34 +46,20 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
   MintableToken public token;
 
   // start and end timestamps where investments are allowed (both inclusive)
-  uint256 public startTimePriv;
-  uint256 public endTimePriv;
-  uint256 public startTimePre;
-  uint256 public endTimePre;
-  uint256 public startTimePub;
-  uint256 public endTimePub;
-
-  uint8 public daysPriv = 15;
-  uint8 public daysPre = 30;
-  uint8 public daysPub = 30;
-
-  // early backer of EMX
-  mapping(address => bool) earlyBacker;
-  mapping(address => bool) preSaleBacker;
+  uint256 public startTime;
+  uint256 public endTime;
 
   // address where funds are collected
   address public wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
-
-  // how many token units a buyer gets per wei
-  uint256 public ratePriv = 4000;
-  uint256 public ratePre = 3500;
-  uint256 public ratePub = 3000;
 
   // amount of raised money in wei
   uint256 public weiRaised;
 
   // cap for crowdsale
   uint256 public cap = 300000 ether;
+
+  // stages and rates are private variables.
+  mapping(uint8 => uint256) daysRates;
 
   /**
    * event for token purchase logging
@@ -82,20 +68,24 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
    * @param value weis paid for purchase
    * @param amount amount of tokens purchased
    */
-  event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
+  event TokenPurchase(address indexed purchaser, address indexed beneficiary, 
+                      uint256 value, uint256 amount);
 
   function EMXCrowdsale(uint256 _startTime, address _wallet) public {
     require(_startTime >= now);
     require(_wallet != address(0));
 
     token = createTokenContract();
-    startTimePriv = _startTime;
-    endTimePriv = startTimePriv + (daysPriv * 86400);
-    startTimePre = endTimePriv + 1;
-    endTimePre = endTimePriv + (daysPre * 86400);
-    startTimePub = endTimePre + 1;
-    endTimePub = endTimePre + (daysPub * 86400);
     wallet = _wallet;
+    startTime = _startTime;
+    endTime = startTime + 80 days;
+
+    // set the days lapesed, and rates.
+    daysRates[15] = 4000;
+    daysRates[45] = 3500;
+    daysRates[65] = 3250;
+    daysRates[75] = 3125;
+    daysRates[80] = 3000;
   }
 
   // creates the token to be sold.
@@ -104,53 +94,8 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     return new EMXToken();
   }
 
-  function isEarlyBacker(address _sender) public view returns (bool) {
-    return earlyBacker[_sender];
-  }
-
-  function isPreSaleBacker(address _sender) public view returns (bool) {
-    return preSaleBacker[_sender];
-  }
-
   function totalRaised() public view returns (uint256) {
     return weiRaised;
-  }
-
-  /**
-   * @dev for testing purposes.
-   * Reset the time for Pre-Sale
-   * @return rate for Pre-Sale
-   */
-  function setEndTimePriv(uint256 _endTime) onlyOwner public returns (uint256) {
-    endTimePriv = _endTime;
-
-    // also recalculate other stages
-    startTimePre = endTimePriv + 1;
-    endTimePre = endTimePriv + (daysPre * 86400);
-    startTimePub = endTimePre + 1;
-    endTimePub = endTimePre + (daysPub * 86400);
-
-    return ratePre;
-  }
-
-  /**
-   * @dev for testing purposes.
-   * Reset the time for Public Sale
-   * @return rate for Public Sale
-   */
-  function setEndTimePre(uint256 _endTime) onlyOwner public returns (uint256) {
-    endTimePre = _endTime;
-
-    // also recalculate other stages
-    startTimePub = endTimePre + 1;
-    endTimePub = endTimePre + (daysPub * 86400);
-
-    return ratePub;
-  }
-
-  function endCrowdsale() onlyOwner public returns (bool) {
-    endTimePub = now - 1;
-    return true;
   }
 
   // fallback function can be used to buy tokens
@@ -166,23 +111,15 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
     uint256 weiAmount = msg.value;
 
     // calculate token amount to be created
-    uint256 rate = 0;
-    if (now <= endTimePriv) {
-      earlyBacker[beneficiary] = true;
-      rate = ratePriv;
-    } else if (now > endTimePriv && now <= endTimePre) {
-      preSaleBacker[beneficiary] = true;
-      rate = ratePre;
-    } else {
-      rate = ratePub;
-    }
-    uint256 tokens = weiAmount.mul(rate);
+    uint256 tokens = weiAmount.mul(getRate());
 
     // update state
     weiRaised = weiRaised.add(weiAmount);
 
-    token.mint(beneficiary, tokens);
-    TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
+    if (tokens > 0) {
+      token.mint(beneficiary, tokens);
+      TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);      
+    }
 
     forwardFunds();
   }
@@ -195,16 +132,34 @@ contract EMXCrowdsale is Claimable, CanReclaimToken, Destructible {
 
   // @return true if the transaction can buy tokens
   function validPurchase() internal view returns (bool) {
-    bool withinPeriod = now >= startTimePriv && now <= endTimePub;
+    // 80 days of sale.
+    bool withinPeriod = now >= startTime && now <= endTime;
     bool nonZeroPurchase = msg.value != 0;
     bool withinCap = weiRaised.add(msg.value) <= cap;
     return withinPeriod && nonZeroPurchase && withinCap;
   }
 
+  function getRate() internal view returns (uint256 rate) {
+    uint256 diff = (now - startTime);
+
+    if (diff <= 15 days) {
+      return daysRates[15];
+    } else if (diff <= 45 days) {
+      return daysRates[45];
+    } else if (diff <= 65 days) {
+      return daysRates[65];
+    } else if (diff <= 75 days) {
+      return daysRates[75];
+    } else if (diff <= 80 days) {
+      return daysRates[80];
+    } 
+    return 0;
+  }
+
   // @return true if crowdsale event has ended
   function hasEnded() public view returns (bool) {
     bool capReached = weiRaised >= cap;
-    return now > endTimePub || capReached;
+    return now > endTime || capReached;
   }
 
 }

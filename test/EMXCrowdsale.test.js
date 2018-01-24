@@ -1,6 +1,7 @@
 
 import expectThrow from 'zeppelin-solidity/test/helpers/expectThrow';
 import assertRevert from 'zeppelin-solidity/test/helpers/assertRevert';
+import increaseTime from 'zeppelin-solidity/test/helpers/increaseTime';
 
 var EMXToken = artifacts.require("./EMXToken.sol");
 var EMXCrowdsale = artifacts.require("./EMXCrowdsale.sol");
@@ -9,6 +10,7 @@ contract('EMXCrowdsale', (accounts) => {
 
   let acc0 = accounts[0];
   let acc1 = accounts[1];
+  let acc2 = accounts[2];
 
   let token;
   let crowdsale;
@@ -19,15 +21,12 @@ contract('EMXCrowdsale', (accounts) => {
     token = EMXToken.at(addr);
   });
 
-  it('should give weiRased of 1 Ether in Private Sale', async () => {
+  it('should give weiRased of 1 Ether in Stage 1 Sale', async () => {
     await crowdsale.sendTransaction({ from: acc1, value: web3.toWei(1, 'ether') });
 
     // wei raised should be 1 ether
     let raised = await crowdsale.totalRaised({from: acc0});
     assert.equal(web3.toWei(1, 'ether'), raised.toString('10'), 'should be 1 ether raised');
-
-    let ok = await crowdsale.isEarlyBacker(acc1);
-    assert.equal(true, ok, 'Acc1 should be true in Private Sale');
   });
 
   it('should have 4000 EMX for 1 Ether in Private Sale', async () => {
@@ -36,49 +35,33 @@ contract('EMXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(4000, 'ether'), bal.toString('10'), 'Should be 4000 ether of EMX');
   });
 
-  it('should give weiRased of 2 Ether in Pre-Sale', async () => {
-    let now = web3.eth.getBlock(web3.eth.blockNumber).timestamp;
-    await crowdsale.setEndTimePriv(now - 1, {from: acc0});
+  it('should give weiRased of 3 Ether in Stage 1 Sale', async () => {
+    await crowdsale.sendTransaction({ from: acc1, value: web3.toWei(2, 'ether') });
 
-    await crowdsale.sendTransaction({ from: acc1, value: web3.toWei(1, 'ether') });
-
-    // wei raised should be 1 ether
+    // wei raised should be 3 ether
     let raised = await crowdsale.totalRaised({from: acc0});
-    assert.equal(web3.toWei(2, 'ether'), raised.toString('10'), 'should be 1 ether raised');
-
-    let ok = await crowdsale.isPreSaleBacker(acc1);
-    assert.equal(true, ok, 'Acc1 should be true in Pre-Sale');
-
+    assert.equal(web3.toWei(3, 'ether'), raised.toString('10'), 'should be 3 ether raised');
   });
 
-  it('should have 7500 EMX for 1 Ether in Private Sale', async () => {
+  it('should have 12000 EMX for 3 Ether in Private Sale', async () => {
     // get the balance
     let bal = await token.balanceOf(acc1);
-    assert.equal(web3.toWei(7500, 'ether'), bal.toString('10'), 'Should be 7500 ether of EMX');
+    assert.equal(web3.toWei(12000, 'ether'), bal.toString('10'), 'Should be 12000 ether of EMX');
   });
 
-  it('should give weiRased of 3 Ether in Public Sale', async () => {
+  it('should change the time to stage 2, change the rate to 3500', async () => {
     let now = web3.eth.getBlock(web3.eth.blockNumber).timestamp;
-    await crowdsale.setEndTimePre(now - 1, {from: acc0});
+    await increaseTime(now + 15 * 86400);
 
-    await crowdsale.sendTransaction({ from: acc1, value: web3.toWei(1, 'ether') });
+    await crowdsale.sendTransaction({ from: acc2, value: web3.toWei(1, 'ether') });
 
-    // wei raised should be 1 ether
+    // wei raised should be 4 ether
     let raised = await crowdsale.totalRaised({from: acc0});
-    assert.equal(web3.toWei(3, 'ether'), raised.toString('10'), 'should be 1 ether raised');
+    assert.equal(web3.toWei(4, 'ether'), raised.toString('10'), 'should be 4 ether raised');
+
+    let bal = await token.balanceOf(acc2);
+    assert.equal(web3.toWei(3500, 'ether'), bal.toString('10'), 'Should be 3500 ether of EMX');
   });
 
-  it('should have 10,500 EMX for 3 Ether in total Sale', async () => {
-    // get the balance
-    let bal = await token.balanceOf(acc1);
-    assert.equal(web3.toWei(10500, 'ether'), bal.toString('10'), 'Should be 10500 ether of EMX');
-  });
-
-  it('should be able to close the Crowdsale', async () => {
-    await crowdsale.endCrowdsale({from: acc0});
-    let stat = await crowdsale.hasEnded();
-
-    assert.equal(true, stat, 'Crowdsale has ended');
-  });
 
 });
