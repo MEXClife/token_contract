@@ -15,6 +15,9 @@ reset: clean
 migrate:
 	truffle migrate --network development
 
+migrate-ropsten:
+	truffle migrate --network ropsten 
+	
 migrate-live:
 	truffle migrate --network live
 

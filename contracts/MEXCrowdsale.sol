@@ -46,14 +46,14 @@ contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
   MintableToken public token;
 
   // start and end timestamps where investments are allowed (both inclusive)
-  uint256 public startTime;
-  uint256 public endTime;
+  uint256 public startTime = 0;
+  uint256 public endTime = 0;
 
   // address where funds are collected
-  address public wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
+  address public wallet = address(0);
 
   // amount of raised money in wei
-  uint256 public weiRaised;
+  uint256 public weiRaised = 0;
 
   // cap for crowdsale
   uint256 public cap = 300000 ether;
