@@ -58,9 +58,20 @@ contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
   // cap for crowdsale
   uint256 public cap = 300000 ether;
 
+  // whitelist backers
+  mapping(address => bool) whiteList;
+
+  // addmin list
+  mapping(address => bool) adminList;
+
   // mappig of our days, and rates.
   mapping(uint8 => uint256) daysRates;
 
+  modifier onlyAdmin() { 
+    require(adminList[msg.sender] == true || msg.sender == owner);
+    _; 
+  }
+  
   /**
    * event for token purchase logging
    * @param purchaser who paid for the tokens
@@ -94,6 +105,11 @@ contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
     return new MEXCToken();
   }
 
+  function addWhiteList (address _backer) onlyAdmin public returns(bool res) {
+    whiteList[_backer] = true;
+    return true;
+  }
+  
   function totalRaised() public view returns (uint256) {
     return weiRaised;
   }
@@ -143,12 +159,13 @@ contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
     uint256 diff = (now - startTime);
 
     if (diff <= 15 days) {
+      require(whiteList[msg.sender] == true);
       return daysRates[15];
-    } else if (diff <= 45 days) {
+    } else if (diff > 15 && diff <= 45 days) {
       return daysRates[45];
-    } else if (diff <= 65 days) {
+    } else if (diff > 45 && diff <= 65 days) {
       return daysRates[65];
-    } else if (diff <= 75 days) {
+    } else if (diff > 65 && diff <= 75 days) {
       return daysRates[75];
     } else if (diff <= 80 days) {
       return daysRates[80];

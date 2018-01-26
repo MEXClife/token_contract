@@ -45,7 +45,12 @@ contract('MEXCrowdsale', (accounts) => {
     token = MEXCToken.at(addr);
   });
 
+  it('should failed acc1 on the private list', async () => {
+    await expectThrow(crowdsale.sendTransaction({ from: acc1, value: web3.toWei(1, 'ether') }));
+  });
+
   it('should give weiRased of 1 Ether in Stage 1 Sale', async () => {
+    await crowdsale.addWhiteList(acc1);
     await crowdsale.sendTransaction({ from: acc1, value: web3.toWei(1, 'ether') });
 
     // wei raised should be 1 ether
@@ -73,9 +78,9 @@ contract('MEXCrowdsale', (accounts) => {
     assert.equal(web3.toWei(12000, 'ether'), bal.toString('10'), 'Should be 12000 ether of MEXC');
   });
 
+
   it('should change the time to stage 2, changed the rate to 3500', async () => {
     await increaseTime(15 * 86400);
-
     await crowdsale.sendTransaction({ from: acc2, value: web3.toWei(1, 'ether') });
 
     // wei raised should be 4 ether
