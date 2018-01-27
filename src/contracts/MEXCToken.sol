@@ -283,7 +283,8 @@ contract MEXCToken is MintableToken  {
     if (msg.sender == owner) {
       _;
     } else {
-      require(!transferDisabled && blackListed[msg.sender] == false);  // default bool is false
+      require(!transferDisabled);
+      require(blackListed[msg.sender] == false);  // default bool is false
       _;
     }
   }
@@ -317,7 +318,7 @@ contract MEXCToken is MintableToken  {
     return true;
   }
 
-  /**
+  /*
    * @dev Function to mint tokens
    * @param _to The address that will receive the minted tokens.
    * @param _amount The amount of tokens to mint.
