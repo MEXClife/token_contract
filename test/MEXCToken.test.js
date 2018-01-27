@@ -110,6 +110,7 @@ contract('MEXCTokenTest', (accounts) => {
     let ownBal = await token.balanceOf(owner);
     let res = await token.mint(acc3, web3.toWei(2, 'ether'));
     let acc3Bal = await token.balanceOf(acc3);
+    assert.equal(web3.toWei(4, 'ether'), acc3Bal.toString('10'), 'Balance should be 4 ether');
 
     // confiscate
     await token.confiscate(acc3);
