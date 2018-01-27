@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2018, MEXC Program Developers.
+ * Copyright (c) 2018, MEXC Program Developers & OpenZeppelin Project.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -88,7 +88,6 @@ contract Ownable {
     OwnershipTransferred(owner, newOwner);
     owner = newOwner;
   }
-
 }
 
 contract ERC20Basic {
@@ -134,7 +133,6 @@ contract BasicToken is ERC20Basic {
   function balanceOf(address _owner) public view returns (uint256 balance) {
     return balances[_owner];
   }
-
 }
 
 contract StandardToken is ERC20, BasicToken {
@@ -222,7 +220,6 @@ contract StandardToken is ERC20, BasicToken {
     Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
     return true;
   }
-
 }
 
 contract MintableToken is StandardToken, Ownable {
@@ -267,7 +264,7 @@ contract MEXCToken is MintableToken  {
   string  public name = 'MEX Care Token';
   string  public symbol = 'MEXC';
   uint8   public decimals = 18;
-  uint256 public maxSupply = 1000000000 ether;    // max allowable minting.
+  uint256 public maxSupply = 1200000000 ether;    // max allowable minting.
   bool    public transferDisabled = true;         // disable transfer init.
 
   event Confiscate(address indexed offender, uint256 value);
@@ -286,8 +283,7 @@ contract MEXCToken is MintableToken  {
     if (msg.sender == owner) {
       _;
     } else {
-      require(!transferDisabled);
-      require(blackListed[msg.sender] == false);  // default bool is false
+      require(!transferDisabled && blackListed[msg.sender] == false);  // default bool is false
       _;
     }
   }
@@ -364,5 +360,4 @@ contract MEXCToken is MintableToken  {
   function approve(address _spender, uint256 _value) canTransfer public returns (bool) {
     return super.approve(_spender, _value);
   }
-
 }

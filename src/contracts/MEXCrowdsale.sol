@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2018, MEXC Program Developers.
+ * Copyright (c) 2018, MEXC Program Developers & OpenZeppelin Project.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -128,35 +128,6 @@ contract CanReclaimToken is Ownable {
   function reclaimToken(ERC20Basic token) external onlyOwner {
     uint256 balance = token.balanceOf(this);
     token.safeTransfer(owner, balance);
-  }
-}
-
-contract Claimable is Ownable {
-  address public pendingOwner;
-
-  /**
-   * @dev Modifier throws if called by any account other than the pendingOwner.
-   */
-  modifier onlyPendingOwner() {
-    require(msg.sender == pendingOwner);
-    _;
-  }
-
-  /**
-   * @dev Allows the current owner to set the pendingOwner address.
-   * @param newOwner The address to transfer ownership to.
-   */
-  function transferOwnership(address newOwner) onlyOwner public {
-    pendingOwner = newOwner;
-  }
-
-  /**
-   * @dev Allows the pendingOwner address to finalize the transfer.
-   */
-  function claimOwnership() onlyPendingOwner public {
-    OwnershipTransferred(owner, pendingOwner);
-    owner = pendingOwner;
-    pendingOwner = address(0);
   }
 }
 
@@ -333,7 +304,7 @@ contract MEXCToken is MintableToken  {
   string  public name = 'MEX Care Token';
   string  public symbol = 'MEXC';
   uint8   public decimals = 18;
-  uint256 public maxSupply = 1000000000 ether;    // max allowable minting.
+  uint256 public maxSupply = 1200000000 ether;    // max allowable minting.
   bool    public transferDisabled = true;         // disable transfer init.
 
   event Confiscate(address indexed offender, uint256 value);
@@ -433,12 +404,12 @@ contract MEXCToken is MintableToken  {
 }
 
 /**
- * The EMXCrowdsale contract.
+ * The MEXCrowdsale contract.
  * The token is based on ERC20 Standard token, with ERC23 functionality to reclaim
  * other tokens accidentally sent to this contract, as well as to destroy
  * this contract once the ICO has ended.
  */
-contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
+contract MEXCrowdsale is CanReclaimToken, Destructible {
   using SafeMath for uint256;
 
   // The token being sold
@@ -484,9 +455,10 @@ contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
   function MEXCrowdsale() public {
 
     token = createTokenContract();
-    startTime = 1518048000;
+    startTime = now; //1518048000;
     endTime = startTime + 80 days;
-    wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
+    wallet = 0xE1A7793620145E45c856fa49277DBdc19a2CEcf4;
+    // wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
 
     // set the days lapsed, and rates for the priod since startTime.
     daysRates[15] = 4000;
@@ -511,10 +483,19 @@ contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
     return true;
   }
   
+  function addAdmin (address _admin) onlyAdmin public returns (bool res) {
+    adminList[_admin] = true;
+    return true;
+  }
+
   function isWhiteListed (address _backer) public view returns (bool res) {
     return whiteList[_backer];
   }
 
+  function isAdmin (address _admin) public view returns (bool res) {
+    return adminList[_admin];
+  }
+  
   function totalRaised() public view returns (uint256) {
     return weiRaised;
   }

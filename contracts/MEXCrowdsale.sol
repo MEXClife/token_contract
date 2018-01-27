@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2018, MEXC Program Developers.
+ * Copyright (c) 2018, MEXC Program Developers & OpenZeppelin Project.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,19 +27,18 @@ pragma solidity ^0.4.17;
 
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 import 'zeppelin-solidity/contracts/token/MintableToken.sol';
-import 'zeppelin-solidity/contracts/ownership/Claimable.sol';
 import 'zeppelin-solidity/contracts/ownership/CanReclaimToken.sol';
 import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
 
 import './MEXCToken.sol';
 
 /**
- * The EMXCrowdsale contract.
+ * The MEXCrowdsale contract.
  * The token is based on ERC20 Standard token, with ERC23 functionality to reclaim
  * other tokens accidentally sent to this contract, as well as to destroy
  * this contract once the ICO has ended.
  */
-contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
+contract MEXCrowdsale is CanReclaimToken, Destructible {
   using SafeMath for uint256;
 
   // The token being sold
@@ -83,13 +82,11 @@ contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
                       uint256 value, uint256 amount);
 
   function MEXCrowdsale(uint256 _startTime, address _wallet) public {
-    require(_startTime >= now);
-    require(_wallet != address(0));
 
     token = createTokenContract();
-    wallet = _wallet;
-    startTime = _startTime;
+    startTime = _startTime; //1518048000;
     endTime = startTime + 80 days;
+    wallet = _wallet; //0x77733DEFb072D75aF02A4415f60212925E6BcF95;
 
     // set the days lapsed, and rates for the priod since startTime.
     daysRates[15] = 4000;
@@ -109,13 +106,22 @@ contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
     token.transferOwnership(_newOwner);
   }
 
-  function addWhiteList (address _backer) onlyAdmin public returns (bool res) {
+  function addWhiteList (address _backer) public onlyAdmin returns (bool res) {
     whiteList[_backer] = true;
+    return true;
+  }
+  
+  function addAdmin (address _admin) onlyAdmin public returns (bool res) {
+    adminList[_admin] = true;
     return true;
   }
 
   function isWhiteListed (address _backer) public view returns (bool res) {
     return whiteList[_backer];
+  }
+
+  function isAdmin (address _admin) public view returns (bool res) {
+    return adminList[_admin];
   }
   
   function totalRaised() public view returns (uint256) {
@@ -186,5 +192,4 @@ contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
     bool capReached = weiRaised >= cap;
     return now > endTime || capReached;
   }
-
 }

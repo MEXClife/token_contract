@@ -55,26 +55,17 @@ contract('MEXCTokenTest', (accounts) => {
     assert.equal(18, dec, 'Decimals should be 18');
   });
 
-  // it('should have a totalSupply of 1 trillion', () => {
-  //   return EMXToken.deployed().then(instance => {
-  //     return instance.totalSupply.call();
-  //   }).then(supply => {
-  //     let total = web3.fromWei(supply, 'wei').toNumber();
-  //     assert.equal(web3.toWei(1000000000, 'ether'), total, 'Supply should be 1t ether');
-  //   });
-  // });
-
-  it('should be able to mint 3500 for acc1', async () => {
-    let res = await token.mint(acc1, web3.toWei(3500, 'ether'));
+  it('should be able to mint 4000 for acc1', async () => {
+    let res = await token.mint(acc1, web3.toWei(4000, 'ether'));
     let bal = await token.balanceOf(acc1);
     let supply = await token.totalSupply.call();
 
     let balance = bal.toString('10');
-    assert.equal(web3.toWei(3500, 'ether').toString('10'), balance, 'Balance should be 3500 ether');        
+    assert.equal(web3.toWei(4000, 'ether').toString('10'), balance, 'Balance should be 3500 ether');        
 
     let s = supply.toString('10');
-    let expected = web3.toWei(3500, 'ether').toString('10');
-    assert.equal(s, expected, 'Total supply should be 3500 ether');
+    let expected = web3.toWei(4000, 'ether').toString('10');
+    assert.equal(s, expected, 'Total supply should be 4000 ether');
   });
 
   it('should disable transfers to acc2', async () => {
