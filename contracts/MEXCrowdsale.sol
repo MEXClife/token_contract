@@ -105,9 +105,17 @@ contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
     return new MEXCToken();
   }
 
-  function addWhiteList (address _backer) onlyAdmin public returns(bool res) {
+  function setTokenOwner (address _newOwner) public onlyOwner {
+    token.transferOwnership(_newOwner);
+  }
+
+  function addWhiteList (address _backer) onlyAdmin public returns (bool res) {
     whiteList[_backer] = true;
     return true;
+  }
+
+  function isWhiteListed (address _backer) public view returns (bool res) {
+    return whiteList[_backer];
   }
   
   function totalRaised() public view returns (uint256) {

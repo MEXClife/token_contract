@@ -484,7 +484,7 @@ contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
   function MEXCrowdsale() public {
 
     token = createTokenContract();
-    startTime = 1518048000
+    startTime = 1518048000;
     endTime = startTime + 80 days;
     wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
 
@@ -511,6 +511,10 @@ contract MEXCrowdsale is Claimable, CanReclaimToken, Destructible {
     return true;
   }
   
+  function isWhiteListed (address _backer) public view returns (bool res) {
+    return whiteList[_backer];
+  }
+
   function totalRaised() public view returns (uint256) {
     return weiRaised;
   }
