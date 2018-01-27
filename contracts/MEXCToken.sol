@@ -27,8 +27,9 @@ pragma solidity ^0.4.17;
 
 
 import 'zeppelin-solidity/contracts/token/MintableToken.sol';
+import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
 
-contract MEXCToken is MintableToken  {
+contract MEXCToken is MintableToken, Destructible  {
 
   string  public name = 'MEX Care Token';
   string  public symbol = 'MEXC';
@@ -52,7 +53,8 @@ contract MEXCToken is MintableToken  {
     if (msg.sender == owner) {
       _;
     } else {
-      require(!transferDisabled && blackListed[msg.sender] == false);  // default bool is false
+      require(!transferDisabled);
+      require(blackListed[msg.sender] == false);  // default bool is false
       _;
     }
   }
@@ -62,6 +64,11 @@ contract MEXCToken is MintableToken  {
    */
   function allowTransfers() onlyOwner public returns (bool) {
     transferDisabled = false;
+    return true;
+  }
+
+  function disallowTransfers() onlyOwner public returns (bool) {
+    transferDisabled = true;
     return true;
   }
 
@@ -86,7 +93,7 @@ contract MEXCToken is MintableToken  {
     return true;
   }
 
-  /**
+  /*
    * @dev Function to mint tokens
    * @param _to The address that will receive the minted tokens.
    * @param _amount The amount of tokens to mint.

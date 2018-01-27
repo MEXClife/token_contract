@@ -299,7 +299,7 @@ contract MintableToken is StandardToken, Ownable {
   }
 }
 
-contract MEXCToken is MintableToken  {
+contract MEXCToken is MintableToken, Destructible  {
 
   string  public name = 'MEX Care Token';
   string  public symbol = 'MEXC';
@@ -334,6 +334,11 @@ contract MEXCToken is MintableToken  {
    */
   function allowTransfers() onlyOwner public returns (bool) {
     transferDisabled = false;
+    return true;
+  }
+
+  function disallowTransfers() onlyOwner public returns (bool) {
+    transferDisabled = true;
     return true;
   }
 

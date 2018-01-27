@@ -90,6 +90,22 @@ contract Ownable {
   }
 }
 
+contract Destructible is Ownable {
+
+  function Destructible() public payable { }
+
+  /**
+   * @dev Transfers the current balance to the owner and terminates the contract.
+   */
+  function destroy() onlyOwner public {
+    selfdestruct(owner);
+  }
+
+  function destroyAndSend(address _recipient) onlyOwner public {
+    selfdestruct(_recipient);
+  }
+}
+
 contract ERC20Basic {
   uint256 public totalSupply;
   function balanceOf(address who) public view returns (uint256);
@@ -259,7 +275,7 @@ contract MintableToken is StandardToken, Ownable {
   }
 }
 
-contract MEXCToken is MintableToken  {
+contract MEXCToken is MintableToken, Destructible  {
 
   string  public name = 'MEX Care Token';
   string  public symbol = 'MEXC';
@@ -294,6 +310,11 @@ contract MEXCToken is MintableToken  {
    */
   function allowTransfers() onlyOwner public returns (bool) {
     transferDisabled = false;
+    return true;
+  }
+
+  function disallowTransfers() onlyOwner public returns (bool) {
+    transferDisabled = true;
     return true;
   }
 
