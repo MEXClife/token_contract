@@ -4,10 +4,10 @@ var MEXCToken = artifacts.require("./MEXCToken.sol");
 
 module.exports = function(deployer, network, accounts) {
 
-  const acc0 = 0xE1A7793620145E45c856fa49277DBdc19a2CEcf4;
+  const acc0 = accounts[0]; //0xE1A7793620145E45c856fa49277DBdc19a2CEcf4;
 
   // deploy EMX Token first.
-  deployer.deploy(MEXCToken, {from: acc0});
+  // deployer.deploy(MEXCToken, {from: acc0});
 
   // EMXCrowdsale (uint256 _startTime, address _wallet)
   //
