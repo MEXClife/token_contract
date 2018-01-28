@@ -54,6 +54,20 @@ library SafeMath {
   }
 }
 
+library SafeERC20 {
+  function safeTransfer(ERC20Basic token, address to, uint256 value) internal {
+    assert(token.transfer(to, value));
+  }
+
+  function safeTransferFrom(ERC20 token, address from, address to, uint256 value) internal {
+    assert(token.transferFrom(from, to, value));
+  }
+
+  function safeApprove(ERC20 token, address spender, uint256 value) internal {
+    assert(token.approve(spender, value));
+  }
+}
+
 contract Ownable {
   address public owner;
 
@@ -87,6 +101,19 @@ contract Ownable {
     require(newOwner != address(0));
     OwnershipTransferred(owner, newOwner);
     owner = newOwner;
+  }
+}
+
+contract CanReclaimToken is Ownable {
+  using SafeERC20 for ERC20Basic;
+
+  /**
+   * @dev Reclaim all ERC20Basic compatible tokens
+   * @param token ERC20Basic The address of the token contract
+   */
+  function reclaimToken(ERC20Basic token) external onlyOwner {
+    uint256 balance = token.balanceOf(this);
+    token.safeTransfer(owner, balance);
   }
 }
 
@@ -275,7 +302,7 @@ contract MintableToken is StandardToken, Ownable {
   }
 }
 
-contract MEXCToken is MintableToken, Destructible  {
+contract MEXCToken is MintableToken, CanReclaimToken, Destructible  {
 
   string  public name = 'MEX Care Token';
   string  public symbol = 'MEXC';
@@ -289,18 +316,20 @@ contract MEXCToken is MintableToken, Destructible  {
   function MEXCToken() public {}
 
   /*
-   * the real reason for blackListed addresses are for those who are
-   * mistakenly sent the EMX tokens to the wrong address. We can disable
-   * the usage of the EMX tokens here.
+   * the real reason for quarantined addresses are for those who are
+   * mistakenly sent the MEXC tokens to the wrong address. We can disable
+   * the usage of the MEXC tokens here.
    */
-  mapping(address => bool) blackListed;           // blackListed addresses
+  mapping(address => bool) quarantined;           // quarantined addresses
+  mapping(address => bool) gratuity;              // locked addresses for owners
 
   modifier canTransfer() {
     if (msg.sender == owner) {
       _;
     } else {
       require(!transferDisabled);
-      require(blackListed[msg.sender] == false);  // default bool is false
+      require(quarantined[msg.sender] == false);  // default bool is false
+      require(gratuity[msg.sender] == false);     // default bool is false
       _;
     }
   }
@@ -318,8 +347,23 @@ contract MEXCToken is MintableToken, Destructible  {
     return true;
   }
 
-  function blackListAddress(address _offender) onlyOwner public returns (bool) {
-    blackListed[_offender] = true;
+  function quarantineAddress(address _addr) onlyOwner public returns (bool) {
+    quarantined[_addr] = true;
+    return true;
+  }
+
+  function unQuarantineAddress(address _addr) onlyOwner public returns (bool) {
+    quarantined[_addr] = false;
+    return true;
+  }
+
+  function lockAddress(address _addr) onlyOwner public returns (bool) {
+    gratuity[_addr] = true;
+    return true;
+  }
+
+  function unlockAddress(address _addr) onlyOwner public returns (bool) {
+    gratuity[_addr] = false;
     return true;
   }
 
