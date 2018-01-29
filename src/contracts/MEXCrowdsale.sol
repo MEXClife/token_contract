@@ -299,12 +299,12 @@ contract MintableToken is StandardToken, Ownable {
   }
 }
 
-contract MEXCToken is MintableToken, CanReclaimToken, Destructible  {
+contract MEXCToken is MintableToken, Destructible  {
 
   string  public name = 'MEX Care Token';
   string  public symbol = 'MEXC';
   uint8   public decimals = 18;
-  uint256 public maxSupply = 1200000000 ether;    // max allowable minting.
+  uint256 public maxSupply = 1714285714 ether;    // max allowable minting.
   bool    public transferDisabled = true;         // disable transfer init.
 
   event Confiscate(address indexed offender, uint256 value);
