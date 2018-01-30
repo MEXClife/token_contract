@@ -477,10 +477,9 @@ contract MEXCrowdsale is CanReclaimToken, Destructible {
   function MEXCrowdsale() public {
 
     token = createTokenContract();
-    startTime = now; //1518048000;
+    startTime = 1518048000;
     endTime = startTime + 80 days;
-    wallet = 0xE1A7793620145E45c856fa49277DBdc19a2CEcf4;
-    // wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
+    wallet = 0x77733DEFb072D75aF02A4415f60212925E6BcF95;
 
     // set the days lapsed, and rates for the priod since startTime.
     daysRates[15] = 4000;
@@ -557,7 +556,7 @@ contract MEXCrowdsale is CanReclaimToken, Destructible {
   // @return true if the transaction can buy tokens
   function validPurchase() internal view returns (bool) {
     // 80 days of sale.
-    bool withinPeriod = now >= startTime && now <= endTime;
+    bool withinPeriod = (now >= startTime && now <= endTime) || msg.sender == owner;
     bool nonZeroPurchase = msg.value != 0;
     bool withinCap = weiRaised.add(msg.value) <= cap;
     return withinPeriod && nonZeroPurchase && withinCap;
