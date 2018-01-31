@@ -39,6 +39,7 @@ contract MXToken is MintableToken, Destructible  {
 
   modifier canTransfer() {
     require(quarantined[msg.sender] == false || msg.sender == owner);  // default bool is false
+    _;
   }
 
   // empty constructor
