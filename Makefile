@@ -3,7 +3,8 @@ compile:
 	truffle compile
 
 init:
-	npm install
+	npm i -g truffle
+	npm i truffle-hdwallet-provider
 
 clean:
 	truffle networks --clean
